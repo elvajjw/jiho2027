@@ -751,11 +751,19 @@ $('vTl').onclick=()=>{$('vTl').classList.add('on');$('vCal').classList.remove('o
 (()=>{const sc=$('tlScroll'),h=$('swipeHint');
   if(sc&&h)sc.addEventListener('scroll',()=>{if(sc.scrollLeft>8)h.style.visibility='hidden'},{passive:true})})();
 
-/* 접기 라벨 */
+/* 접기 상태 저장 + 라벨 */
+const LSF='exam2026-folds-v1';
+let folds={};
+try{folds=JSON.parse(localStorage.getItem(LSF)||'{}')}catch(e){}
 document.querySelectorAll('details.fold').forEach(d=>{
   const ch=d.querySelector('.chev');
+  if(Object.prototype.hasOwnProperty.call(folds,d.id))d.open=!!folds[d.id];
   const sync=()=>{ch.textContent=d.open?'접기':'펼치기'};
-  d.addEventListener('toggle',sync);sync();
+  d.addEventListener('toggle',()=>{
+    sync();folds[d.id]=d.open;
+    try{localStorage.setItem(LSF,JSON.stringify(folds))}catch(e){}
+  });
+  sync();
 });
 
 /* 요약 카운트 */
